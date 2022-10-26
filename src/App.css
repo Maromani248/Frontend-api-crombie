@@ -1,3 +1,21 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 200px;
+  width: 90%;
+  height: auto;
+  overflow: hidden;
+  margin: 20px auto;
+  padding: 20px;
+  text-align: center;
+  background-color: #fee69c;
+  color: black;
+}
+
 .App {
   text-align: center;
 }
@@ -28,11 +46,43 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/******************************************************/
+
+.container-product{
+  background-color: #BCD379;
+  border-radius: 10px;
+  border: 2px solid #9db064;
+  text-align: center;
 }
+
+.container-product p {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.container-form {
+  margin: 20px 0;
+}
+
+.container-inputs {
+  margin: 20px 0;
+}
+
+.container-form input {
+  display: flex;
+  width: 50%;
+  position: relative;
+  left: 25%;
+  margin: 5px 0;
+}
+
+.container-form button {
+  width: 50%;
+  height: 50px;
+  border-radius: 5px;
+  border-style: none;
+  background-color: #326E2F;
+  color: white;
+}
+
