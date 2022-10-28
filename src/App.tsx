@@ -12,97 +12,147 @@ function App() {
 const [products, setProducts] = useState<Product[]>();
 const [inputs, setInputs] = useState({name: "", brand: "", price: 0});
 
-useEffect (() => {
-  fetch("https://example1-production.up.railway.app/product").then((result) => {
-    result.json().then((data: Product[]) => {
-      setProducts(data);
+ useEffect(() => {
+   getData();
+ }, []);
+
+ const getData = () => {
+   fetch("https://example1-production.up.railway.app/product").then(
+     (result) => {
+       result.json().then((data: Product[]) => {
+         setProducts(data);
+       });
+     }
+   );
+ };
+
+ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+   e.preventDefault();
+   fetch("https://example1-production.up.railway.app/product/", {
+     method: "POST",
+     body: JSON.stringify({ ...inputs, price: Number(inputs.price) }),
+     headers: {
+       "Content-Type": "application/json",
+     },
+   }).then((result) => {
+     getData();
+     const resetForm = e.target as HTMLFormElement;
+     resetForm.reset();
+   });
+ };
+
+ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   //@ts-ignore
+   inputs[e.target.name] = e.target.value;
+   setInputs({ ...inputs });
+ };
+
+ function handleEdit(id: number) {
+    fetch(`https://example1-production.up.railway.app/product/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        name: String(inputs.name),
+        brand: String(inputs.brand),
+        price: Number(inputs.price),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then(() => {
+      getData();
     });
-  });
-}, []);
+  }
 
-console.log(products);
+ const handleDelete = (id: number) => {
+   fetch(`https://example1-production.up.railway.app/product/${id}`, {
+     method: "DELETE",
+     headers: {
+       "Content-Type": "application/json",
+     },
+   }).then(() => {
+     getData();
+   });
+ };
 
-const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  console.log("evento", e);
-  e.preventDefault();
-  fetch("https://example1-production.up.railway.app/product", {
-    method: "POST",
-    body: JSON.stringify({ ...inputs, price: Number(inputs.price) }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((result) => {
-    result.json().then((data) => {
-      console.log(data);
-    });
-  });
-};
-
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //@ts-ignore
-  inputs[e.target.name] = e.target.value;
-  setInputs({...inputs});
-};
-
-/* const handleShow = (e) => {
-
-} */
+ console.log("inputs", inputs);
 
   return (
-    <div className="container-global">
-      <>
+    <div className="container">
+      <div className="container-left">
+        <table className="table table-borderless">
+          <thead className="table table-container">
+            <tr className="mi-tabla-personalizada">
+              <th scope="col">ID</th>
+              <th scope="col">Product</th>
+              <th scope="col">Brand</th>
+              <th scope="col">Price</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+        </table>
         {products?.map((product) => {
           return (
-            <div key={product.id} className="container-product">
-          
-              <div className='container-grid'>
-                <p>{product.name}</p>
-                <p>{product.brand}</p>
-                <p>{product.price}</p>
-              </div>
-            </div>
+            <table className="table table-borderless">
+              <tbody>
+                <tr>
+                  <th scope="row"> {product.id} </th>
+                  <td>{product.name}</td>
+                  <td>{product.brand}</td>
+                  <td>${product.price}</td>
+                  <td>
+                    <button
+                      className="btn btn-primary"
+                      name="button"
+                      onClick={() => handleEdit(product.id)}
+                    >
+                      Edit
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-danger"
+                      name="button"
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           );
         })}
-      </>
+      </div>
+      <div className="container-right">
+        <form onSubmit={handleSubmit} className="container-form">
+          <label>Add a product here: </label>
+          <div className="container-inputs">
+            <input
+              type={"text"}
+              placeholder="Name"
+              name={"name"}
+              onChange={handleChange}
+            />
+            <input
+              type={"text"}
+              placeholder="Brand"
+              name={"brand"}
+              onChange={handleChange}
+            />
+            <input
+              type={"text"}
+              placeholder="Price"
+              name={"price"}
+              onChange={handleChange}
+            />
+          </div>
 
-      <form onSubmit={handleSubmit} className="container-form">
-        <label>Agregá tu producto acá: </label>
-        <div className='container-inputs'>
-          <input
-            type={"text"}
-            placeholder="Name"
-            name={"name"}
-            onChange={handleChange}
-          />
-          <input
-            type={"text"}
-            placeholder="Brand"
-            name={"brand"}
-            onChange={handleChange}
-          />
-          <input
-            type={"text"}
-            placeholder="Price"
-            name={"price"}
-            onChange={handleChange}
-          />
-        </div>
-
-        <button>Crear</button>
-      </form>
+          <button>Add</button>
+        </form>
+      </div>
     </div>
   );
 }
 
 export default App;
-
-/* useEffect(() => {
-  fetch("https://example1-production.up.railway.app/product", {
-    method: "GET",
-  })
-    .then((response) => response.json())
-    .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
-}, []); */
-
-// https://nodo-production.up.railway.app/product
